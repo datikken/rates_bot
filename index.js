@@ -10,6 +10,8 @@ bot.command('quit', (ctx) => {
 })
 
 bot.on('message', (ctx) => {
+  // ctx.message.text
+  console.log(ctx.message.text)
   ctx.telegram.sendMessage(channels.shadybekov_channel_2, `Hello ${ctx.state}`)
 })
 
