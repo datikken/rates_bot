@@ -1,11 +1,14 @@
 import {countries} from "../config/countries.js";
 import {coins} from "../config/coins.js";
 import {Markup} from "telegraf";
+import qb from './query_builder.js';
 
 export const getAllCountryButtons = () => {
   let res = [];
-  for(let country in countries) {
-        res.push([Markup.button.callback(`${countries[country]} ${country}`, `${country}`)]);
+  for (let country in countries) {
+    res.push([
+      Markup.button.callback(`${countries[country]} ${country}`,
+          `${country}`)]);
   }
   return res;
 };
@@ -13,7 +16,8 @@ export const getAllCountryButtons = () => {
 export const getAllCoinButtons = () => {
   let res = [];
   coins.map(coin => {
-    res.push([Markup.button.callback(`${coin.symbol} ${coin.name}`, `${coin.symbol}`)]);
+    res.push([
+      Markup.button.callback(`${coin.symbol} ${coin.name}`, `${coin.symbol}`)]);
   })
   return res;
 }
@@ -31,4 +35,8 @@ export const getTimezonesButtons = (tz) => {
     res.push([Markup.button.callback(`${tzStr}`, `${tzStr}`)]);
   })
   return res;
+}
+
+export const getAllTasksButtons = async () => {
+  qb.getTasks();
 }

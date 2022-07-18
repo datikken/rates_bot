@@ -1,14 +1,7 @@
-import db from '../database/database.js';
 import cron from 'node-cron';
 import {countries} from "../config/countries.js";
 import ct from 'countries-and-timezones';
-
-// cron.schedule('0 1 * * *', () => {
-//   console.log('Running a job at 01:00 at America/Sao_Paulo timezone');
-// }, {
-//   scheduled: true,
-//   timezone: "America/Sao_Paulo"
-// });
+import qb from '../database/query_builder.js';
 
 export const getAllTimezonesForAllCountries = () => {
   let allTZ = [];
@@ -19,6 +12,14 @@ export const getAllTimezonesForAllCountries = () => {
   return allTZ;
 }
 
-export const runScheduledTasks = () => {
-  db.get();
+export const runScheduledTasks = async (fn) => {
+  const tasks = await qb.getTasks();
+  tasks.map(task => {
+    cron.schedule(task.time, () => {
+      fn();
+    }, {
+      scheduled: true,
+      timezone: task.timezone
+    });
+  });
 }

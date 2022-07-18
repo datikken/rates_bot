@@ -2,17 +2,18 @@ import {
   getAllCoinButtons,
   getAllCountryButtons,
   getFinalButtons,
-  getTimezonesButtons
+  getTimezonesButtons,
+  getAllTasksButtons
 } from "./database/button.js";
 import {getAllTimezonesForAllCountries} from "./controller/scheduler.js";
 import {Markup, Telegraf} from 'telegraf';
-import QueryBuilder from "./database/query_builder.js";
 import 'dotenv/config'
-import db from './database/database.js';
 import {countries} from "./config/countries.js";
 import {coins} from "./config/coins.js";
 import {TimePicker} from "telegraf-time-picker";
 import ct from 'countries-and-timezones';
+import qb from './database/query_builder.js';
+import {runScheduledTasks} from "./controller/scheduler.js";
 
 // import { channels } from "./config/channels.js";
 // import cron from 'node-cron';
@@ -20,15 +21,26 @@ import ct from 'countries-and-timezones';
 
 // Instances
 const bot = new Telegraf(process.env.BOT_TOKEN)
-const qb = new QueryBuilder();
 const timePicker = new TimePicker(bot);
 const allTimezones = getAllTimezonesForAllCountries();
 
+// console.log(await qb.getTasks())
+
 // Commands
-bot.command('a', async (ctx) => {
+bot.command('/create_task', async ctx => {
   try {
     await ctx.replyWithHTML(`<b>Select country:</b>`, Markup.inlineKeyboard([
       ...getAllCountryButtons(),
+    ]))
+  } catch (e) {
+    console.error(e)
+  }
+})
+
+bot.command('/get_tasks', async ctx => {
+  try {
+    await ctx.replyWithHTML(`<b>Existing tasks:</b>`, Markup.inlineKeyboard([
+      ...getAllTasksButtons(),
     ]))
   } catch (e) {
     console.error(e)
@@ -107,6 +119,7 @@ timePicker.setTimePickerListener((context, time) => {
 });
 
 // Init
+runScheduledTasks();
 bot.launch()
 
 process.once('SIGINT', () => bot.stop('SIGINT'))
