@@ -15,6 +15,10 @@ class QueryBuilder {
     this.query.time = timestamp;
   }
 
+  addTimezone(tz) {
+    this.query.tz = tz;
+  }
+
   getTotal() {
     return `Selected: ${this.query.country} - ${this.query.coin} at ${this.query.time}`;
   }

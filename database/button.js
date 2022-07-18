@@ -24,3 +24,11 @@ export const getFinalButtons = () => {
     Markup.button.callback('Save', 'save'),
   ]
 }
+
+export const getTimezonesButtons = (tz) => {
+  let res = [];
+  tz.map(tzStr => {
+    res.push([Markup.button.callback(`${tzStr}`, `${tzStr}`)]);
+  })
+  return res;
+}
