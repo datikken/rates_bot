@@ -5,7 +5,7 @@ import {
   getTimezonesButtons
 } from "./database/button.js";
 import {getAllTimezonesForAllCountries} from "./controller/scheduler.js";
-import { Markup, Telegraf } from 'telegraf';
+import {Markup, Telegraf} from 'telegraf';
 import QueryBuilder from "./database/query_builder.js";
 import 'dotenv/config'
 import db from './database/database.js';
@@ -28,7 +28,7 @@ const allTimezones = getAllTimezonesForAllCountries();
 bot.command('a', async (ctx) => {
   try {
     await ctx.replyWithHTML(`<b>Select country:</b>`, Markup.inlineKeyboard([
-        ...getAllCountryButtons(),
+      ...getAllCountryButtons(),
     ]))
   } catch (e) {
     console.error(e)
@@ -36,17 +36,18 @@ bot.command('a', async (ctx) => {
 })
 
 // Actions
-for(let country in countries) {
+for (let country in countries) {
   bot.action(country, async ctx => {
     const selectedCountry = ctx.match.input;
     qb.addCountry(selectedCountry)
     ctx.reply('Country accepted!');
     const tz = ct.getCountry(selectedCountry);
-    if(tz.timezones.length > 1) {
+    if (tz.timezones.length > 1) {
       try {
-        await ctx.replyWithHTML(`<b>Select timezone:</b>`, Markup.inlineKeyboard([
-          ...getTimezonesButtons(tz.timezones),
-        ]))
+        await ctx.replyWithHTML(`<b>Select timezone:</b>`,
+            Markup.inlineKeyboard([
+              ...getTimezonesButtons(tz.timezones),
+            ]))
       } catch (e) {
         console.error(e)
       }
@@ -61,6 +62,7 @@ for(let country in countries) {
     }
   });
 }
+
 allTimezones.map(tz => {
   bot.action(tz, async ctx => {
     qb.addTimezone(ctx.match.input);
@@ -74,6 +76,7 @@ allTimezones.map(tz => {
     }
   })
 })
+
 coins.map(coin => {
   bot.action(coin.symbol, async ctx => {
     qb.addCoin(ctx.match.input);
@@ -99,10 +102,11 @@ bot.action('save', ctx => {
 timePicker.setTimePickerListener((context, time) => {
   qb.addTime(time);
   context.reply(qb.getTotal(), Markup.inlineKeyboard([
-      ...getFinalButtons()
+    ...getFinalButtons()
   ]));
 });
 
+// Init
 bot.launch()
 
 process.once('SIGINT', () => bot.stop('SIGINT'))
