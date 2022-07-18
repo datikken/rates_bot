@@ -20,7 +20,7 @@ class QueryBuilder {
   }
 
   getTotal() {
-    return `Selected: ${this.query.country} - ${this.query.coin} at ${this.query.time}`;
+    return `Selected: ${this.query.country} - ${this.query.tz ?? this.query.tz} - ${this.query.coin} at ${this.query.time}`;
   }
 
   save() {

@@ -40,6 +40,7 @@ for(let country in countries) {
   bot.action(country, async ctx => {
     const selectedCountry = ctx.match.input;
     qb.addCountry(selectedCountry)
+    ctx.reply('Country accepted!');
     const tz = ct.getCountry(selectedCountry);
     if(tz.timezones.length > 1) {
       try {
@@ -58,7 +59,6 @@ for(let country in countries) {
         console.error(e)
       }
     }
-    // ctx.reply('Country accepted!');
   });
 }
 allTimezones.map(tz => {
@@ -88,10 +88,12 @@ coins.map(coin => {
 
 bot.action('reset', ctx => {
   qb.reset();
+  ctx.replyWithHTML(`<b>Jobs done.</b>`)
 })
 
 bot.action('save', ctx => {
   qb.save();
+  ctx.replyWithHTML(`<b>Jobs done.</b>`)
 })
 
 timePicker.setTimePickerListener((context, time) => {
