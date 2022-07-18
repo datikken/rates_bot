@@ -1,6 +1,7 @@
 import {Markup} from "telegraf";
 import {getAllCountryButtons, getAllTasksButtons} from "../database/button.js";
-import fetch from 'node-fetch';
+import {getCoinPrice} from "../ticker/index.js";
+import {getFormatedMessage} from "../util/index.js";
 
 export const setBotCommands = (bot) => {
   bot.command('/create_task', async ctx => {
@@ -24,10 +25,8 @@ export const setBotCommands = (bot) => {
   })
 
   bot.command('/btc', async ctx => {
-      const resp = await fetch(`${process.env.TICKER_URL}/BTC/`)
-      const { data } = await resp.json();
-      const answer = `Bitcoin BTC - ${data.USD.price}$ ${data.USD.day}%`;
-
+      const data = await getCoinPrice('BTC')
+      const answer = await getFormatedMessage('BTC', data);
       ctx.reply(answer)
   })
 }
