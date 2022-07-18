@@ -9,7 +9,7 @@ import {
 } from "../database/button.js";
 import {coins} from "../config/coins.js";
 import {TimePicker} from "telegraf-time-picker";
-import {getAllTimezonesForAllCountries} from "../controller/scheduler.js";
+import {getAllTimezonesForAllCountries} from "../schedule/scheduler.js";
 
 export const setBotActions = (bot) => {
   const timePicker = new TimePicker(bot);
