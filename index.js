@@ -1,11 +1,9 @@
+import Sentry from "@sentry/node";
 import {Telegraf} from 'telegraf';
 import {runScheduledTasks} from "./schedule/index.js";
 import {setBotActions} from "./actions/index.js";
 import {setBotCommands} from "./commands/index.js";
 import "dotenv/config";
-
-import Sentry from "@sentry/node";
-import Tracing from "@sentry/tracing";
 
 Sentry.init({
   dsn: "https://5ffaa9c7876343009ea41b91500dbfa8@o1152440.ingest.sentry.io/6585501",

@@ -1,7 +1,6 @@
 import cron from 'node-cron';
 import ct from 'countries-and-timezones';
 import qb from '../database/qb.js';
-import {channels} from "../config/channels.js";
 import {postToAllChannels} from "./posting.js";
 
 
@@ -20,7 +19,6 @@ export const runScheduledTasks = async bot => {
   tasks.slice(0, 2).map(task => {
     cron.schedule(task.time, () => {
       postToAllChannels(task.coin, bot);
-      bot.telegram.sendMessage(channels[0].code, '123');
     });
   })
 }
