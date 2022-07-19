@@ -12,9 +12,9 @@ import {getAllTimezonesForAllCountries} from "../schedule/index.js";
 import {deleteData} from "../database/button.js";
 import { Markup, deunionize } from 'telegraf';
 
-export const setBotActions = (bot) => {
+export const setBotActions = async (bot) => {
   const timePicker = new TimePicker(bot);
-  const allTimezones = getAllTimezonesForAllCountries();
+  const allTimezones = await getAllTimezonesForAllCountries();
 
   bot.action(
       deleteData.filter({

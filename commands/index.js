@@ -1,7 +1,5 @@
 import {Markup} from "telegraf";
 import {getAllCountryButtons, getAllTasksButtons} from "../database/button.js";
-import {getCoinPrice} from "../ticker/index.js";
-import {getFormatedMessage} from "../util/index.js";
 import {cmmnds} from "../config/commands.js";
 import {postToAllChannels} from "../schedule/posting.js";
 
@@ -34,9 +32,6 @@ export const setBotCommands = (bot) => {
   })
 
   bot.command('/btc', async ctx => {
-      const data = await getCoinPrice('BTC')
-      const answer = await getFormatedMessage('BTC', data);
-      await postToAllChannels(answer, ctx)
-      ctx.reply(answer)
+      await postToAllChannels('BTC', ctx);
   })
 }

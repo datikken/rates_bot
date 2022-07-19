@@ -1,14 +1,13 @@
 import cron from 'node-cron';
-// import {countries} from "../config/countries.js";
 import ct from 'countries-and-timezones';
 import qb from '../database/qb.js';
 
-const countries = [];
 
-export const getAllTimezonesForAllCountries = () => {
+export const getAllTimezonesForAllCountries = async () => {
+  const countries = await qb.getCountries();
   let allTZ = [];
   for (let country in countries) {
-    const tz = ct.getCountry(country);
+    const tz = ct.getCountry(countries[country].iso);
     tz.timezones.map(tzVariant => allTZ.push(tzVariant))
   }
   return allTZ;

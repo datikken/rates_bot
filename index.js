@@ -2,7 +2,9 @@ import {Telegraf} from 'telegraf';
 import {runScheduledTasks} from "./schedule/index.js";
 import {setBotActions} from "./actions/index.js";
 import {setBotCommands} from "./commands/index.js";
+import cron from 'node-cron';
 import "dotenv/config";
+import {channels} from "./config/channels.js";
 
 // import { channels } from "./config/channels.js";
 
@@ -15,7 +17,12 @@ const bot = new Telegraf(process.env.BOT_TOKEN)
 
 setBotCommands(bot)
 setBotActions(bot)
-runScheduledTasks();
+
+cron.schedule('* 5 * * *', () => {
+  bot.telegram.sendMessage(channels[0].code, "scheduled message");
+});
+
+await runScheduledTasks(await runScheduledTasks('BTC', bot));
 
 bot.launch()
 
