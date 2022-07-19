@@ -2,6 +2,9 @@ import {countries} from "../config/countries.js";
 import {coins} from "../config/coins.js";
 import {Markup} from "telegraf";
 import qb from './query_builder.js';
+import { CallbackData } from '@bot-base/callback-data';
+
+export const deleteData = new CallbackData('delete', ['id']);
 
 export const getAllCountryButtons = () => {
   let res = [];
@@ -38,5 +41,16 @@ export const getTimezonesButtons = (tz) => {
 }
 
 export const getAllTasksButtons = async () => {
-  qb.getTasks();
+  const tasks = await qb.getTasks();
+  let res = [];
+  tasks.map(el => {
+    res.push([Markup.button.callback(
+        `${el.country} - ${el.timezone} - ${el.time} - ${el.coin}   ❌`,
+        deleteData.create({
+          type: 'delete',
+          id: el.id,
+        })
+    )])
+  });
+  return res;
 }

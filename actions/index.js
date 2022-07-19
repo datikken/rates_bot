@@ -1,7 +1,6 @@
 import {countries} from "../config/countries.js";
 import qb from "../database/query_builder.js";
 import ct from "countries-and-timezones";
-import {Markup} from "telegraf";
 import {
   getAllCoinButtons,
   getFinalButtons,
@@ -9,12 +8,27 @@ import {
 } from "../database/button.js";
 import {coins} from "../config/coins.js";
 import {TimePicker} from "telegraf-time-picker";
-import {getAllTimezonesForAllCountries} from "../schedule/scheduler.js";
+import {getAllTimezonesForAllCountries} from "../schedule/index.js";
+import {deleteData} from "../database/button.js";
+import { Markup, deunionize } from 'telegraf';
 
 export const setBotActions = (bot) => {
   const timePicker = new TimePicker(bot);
   const allTimezones = getAllTimezonesForAllCountries();
 
+  bot.action(
+      deleteData.filter({
+        action: 'delete'
+      }),
+      async (ctx) => {
+        const { id } = deleteData.parse(
+            deunionize(ctx.callbackQuery).data
+        );
+        await qb.deleteTask(id);
+      }
+  );
+
+  //TODO: reformat actions using CallbackData
   for (let country in countries) {
     bot.action(country, async ctx => {
       const selectedCountry = ctx.match.input;

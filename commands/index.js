@@ -17,7 +17,7 @@ export const setBotCommands = (bot) => {
   bot.command('/get_tasks', async ctx => {
     try {
       await ctx.replyWithHTML(`<b>Existing tasks:</b>`, Markup.inlineKeyboard([
-        ...getAllTasksButtons(),
+        ... await getAllTasksButtons(),
       ]))
     } catch (e) {
       console.error(e)

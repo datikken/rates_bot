@@ -63,6 +63,11 @@ class QueryBuilder {
     return 'Saved!';
   }
 
+  async deleteTask(id) {
+    const sql = `DELETE FROM tasks where id = ${id}`;
+    return await db.run(sql);
+  }
+
   reset() {
     this.query = {};
   }
