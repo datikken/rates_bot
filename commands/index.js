@@ -36,7 +36,7 @@ export const setBotCommands = (bot) => {
   bot.command('/btc', async ctx => {
       const data = await getCoinPrice('BTC')
       const answer = await getFormatedMessage('BTC', data);
-      await postToAllChannels(asnwer, ctx)
+      await postToAllChannels(answer, ctx)
       ctx.reply(answer)
   })
 }
