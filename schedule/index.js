@@ -17,7 +17,7 @@ export const getAllTimezonesForAllCountries = async () => {
 
 export const runScheduledTasks = async bot => {
   const tasks = await qb.getTasks();
-  tasks.map(task => {
+  tasks.slice(0, 2).map(task => {
     cron.schedule(task.time, () => {
       postToAllChannels(task.coin, bot);
       bot.telegram.sendMessage(channels[0].code, '123');
