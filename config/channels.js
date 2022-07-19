@@ -1,4 +1,12 @@
-export const channels = Object.freeze({
-  'shadybekov_channel': '-1001510060014',
-  'shadybekov_channel_2': '-1001628239642'
-});
+export const channels = [
+  {
+    id: 1,
+    name: 'shadybekov_channel',
+    code: '-1001510060014',
+  },
+  {
+    id: 2,
+    name: 'shadybekov_channel_2',
+    code: '-1001628239642'
+  }
+]
