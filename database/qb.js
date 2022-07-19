@@ -6,8 +6,37 @@ class QueryBuilder {
     this.query = {};
   }
 
-  addCountry(country) {
-    this.query.country = country;
+  async getCountryById(id) {
+    const sql = `SELECT * FROM countries WHERE id = ${id}`;
+    return new Promise((resolve, reject) => {
+      db.get(sql, (error, result) => {
+        if (error) {
+          reject(error);
+        } else {
+          resolve(result);
+        }
+      });
+    });
+  }
+
+  getCountry() {
+    return this.query.country;
+  }
+
+  async addCountry(id) {
+    this.query.country = await this.getCountryById(id);
+  }
+
+  async getCountries() {
+    return  new Promise((resolve, reject) => {
+      db.all('SELECT * FROM countries', (error, result) => {
+        if (error) {
+          reject(error);
+        } else {
+          resolve(result);
+        }
+      });
+    });
   }
 
   addCoin(coin) {
@@ -23,7 +52,7 @@ class QueryBuilder {
   }
 
   getTotal() {
-    return `Selected: ${this.query.country} - ${this.query.tz ? this.query.tz : this.getTimeZoneByCountry(this.query.country)} - ${this.query.coin} at ${this.query.time}`;
+    return `Selected: ${this.query.country.name} - ${this.query.tz ? this.query.tz : this.getTimeZoneByCountry(this.query.country.iso)} - ${this.query.coin} at ${this.query.time}`;
   }
 
   getCronFormatedTimeString() {
@@ -52,10 +81,10 @@ class QueryBuilder {
     let tz = this.query.tz;
 
     if(!tz) {
-      tz = this.getTimeZoneByCountry(this.query.country)
+      tz = this.getTimeZoneByCountry(this.query.country.iso)
     }
 
-    db.run(sql, [this.query.country, tz, this.getCronFormatedTimeString(), this.query.coin], err => {
+    db.run(sql, [this.query.country.iso, tz, this.getCronFormatedTimeString(), this.query.coin], err => {
         if(err) console.log(err)
       }
     )

@@ -3,11 +3,13 @@ import {getAllCountryButtons, getAllTasksButtons} from "../database/button.js";
 import {getCoinPrice} from "../ticker/index.js";
 import {getFormatedMessage} from "../util/index.js";
 
+//TODO add start message
+
 export const setBotCommands = (bot) => {
   bot.command('/create_task', async ctx => {
     try {
       await ctx.replyWithHTML(`<b>Select country:</b>`, Markup.inlineKeyboard([
-        ...getAllCountryButtons(),
+        ... await getAllCountryButtons(),
       ]))
     } catch (e) {
       console.error(e)

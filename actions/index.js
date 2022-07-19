@@ -1,7 +1,7 @@
-import {countries} from "../config/countries.js";
-import qb from "../database/query_builder.js";
+import qb from "../database/qb.js";
 import ct from "countries-and-timezones";
 import {
+  countryData,
   getAllCoinButtons,
   getFinalButtons,
   getTimezonesButtons
@@ -28,33 +28,42 @@ export const setBotActions = (bot) => {
       }
   );
 
-  //TODO: reformat actions using CallbackData
-  for (let country in countries) {
-    bot.action(country, async ctx => {
-      const selectedCountry = ctx.match.input;
-      qb.addCountry(selectedCountry)
-      ctx.reply('Country accepted!');
-      const tz = ct.getCountry(selectedCountry);
-      if (tz.timezones.length > 1) {
-        try {
-          await ctx.replyWithHTML(`<b>Select timezone:</b>`,
-              Markup.inlineKeyboard([
-                ...getTimezonesButtons(tz.timezones),
-              ]))
-        } catch (e) {
-          console.error(e)
-        }
-      } else {
-        try {
-          await ctx.replyWithHTML(`<b>Select coins:</b>`, Markup.inlineKeyboard([
-            ...getAllCoinButtons(),
-          ]))
-        } catch (e) {
-          console.error(e)
+  bot.action(
+      countryData.filter({
+        action: 'add_country'
+      }),
+      async ctx => {
+        const { id } = countryData.parse(
+            deunionize(ctx.callbackQuery).data
+        );
+
+        await qb.addCountry(id);
+
+        const selectedCountry = qb.getCountry()
+        const tz = ct.getCountry(selectedCountry.iso);
+
+        ctx.reply('Country accepted!');
+
+        if (tz.timezones.length > 1) {
+          try {
+            await ctx.replyWithHTML(`<b>Select timezone:</b>`,
+                Markup.inlineKeyboard([
+                  ...getTimezonesButtons(tz.timezones),
+                ]))
+          } catch (e) {
+            console.error(e)
+          }
+        } else {
+          try {
+            await ctx.replyWithHTML(`<b>Select coins:</b>`, Markup.inlineKeyboard([
+              ...getAllCoinButtons(),
+            ]))
+          } catch (e) {
+            console.error(e)
+          }
         }
       }
-    });
-  }
+  )
 
   allTimezones.map(tz => {
     bot.action(tz, async ctx => {

@@ -1,7 +1,9 @@
 import cron from 'node-cron';
-import {countries} from "../config/countries.js";
+// import {countries} from "../config/countries.js";
 import ct from 'countries-and-timezones';
-import qb from '../database/query_builder.js';
+import qb from '../database/qb.js';
+
+const countries = [];
 
 export const getAllTimezonesForAllCountries = () => {
   let allTZ = [];
