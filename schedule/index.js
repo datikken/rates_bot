@@ -1,6 +1,8 @@
 import cron from 'node-cron';
 import ct from 'countries-and-timezones';
 import qb from '../database/qb.js';
+import {channels} from "../config/channels.js";
+import {postToAllChannels} from "./posting.js";
 
 
 export const getAllTimezonesForAllCountries = async () => {
@@ -13,14 +15,12 @@ export const getAllTimezonesForAllCountries = async () => {
   return allTZ;
 }
 
-export const runScheduledTasks = async (fn) => {
+export const runScheduledTasks = async bot => {
   const tasks = await qb.getTasks();
   tasks.map(task => {
     cron.schedule(task.time, () => {
-      fn();
-    }, {
-      scheduled: true,
-      timezone: task.timezone
+      postToAllChannels(task.coin, bot);
+      bot.telegram.sendMessage(channels[0].code, '123');
     });
-  });
+  })
 }
