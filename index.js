@@ -16,7 +16,7 @@ bot.startWebhook(`/bot${process.env.BOT_TOKEN}`, null, PORT)
 setBotCommands(bot)
 setBotActions(bot)
 
-cron.schedule('* 5 * * *', () => {
+cron.schedule('*/5 * * * *', () => {
   bot.telegram.sendMessage(channels[0].code, "scheduled message");
 });
 
