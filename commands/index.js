@@ -11,7 +11,7 @@ export const setBotCommands = (bot) => {
     ${cmmnds.map(el => `<pre>${el}</pre>\n`).join('')}
   `));
 
-  bot.command('/create_task', async ctx => {
+  bot.command('/c', async ctx => {
     try {
       await ctx.replyWithHTML(`<b>Select country:</b>`, Markup.inlineKeyboard([
         ... await getAllCountryButtons(),

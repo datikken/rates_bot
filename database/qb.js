@@ -19,7 +19,19 @@ class QueryBuilder {
     });
   }
 
-  getCountry() {
+  async getCoins() {
+    return  new Promise((resolve, reject) => {
+      db.all('SELECT * FROM coins', (error, result) => {
+        if (error) {
+          reject(error);
+        } else {
+          resolve(result);
+        }
+      });
+    });
+  }
+
+  async getCountry() {
     return this.query.country;
   }
 
@@ -39,27 +51,33 @@ class QueryBuilder {
     });
   }
 
-  addCoin(coin) {
+  async addCoin(coin) {
     this.query.coin = coin;
   }
 
-  addTime(timestamp) {
+  async addTime(timestamp) {
     this.query.time = timestamp;
   }
 
-  addTimezone(tz) {
+  async addTimezone(tz) {
     this.query.tz = tz;
   }
 
-  getTotal() {
-    return `Selected: ${this.query.country.name} - ${this.query.tz ? this.query.tz : this.getTimeZoneByCountry(this.query.country.iso)} - ${this.query.coin} at ${this.query.time}`;
+  async getTotal() {
+    return `
+    Selected:
+     ${this.query.country.name} - 
+     ${this.query.tz ? this.query.tz : this.getTimeZoneByCountry(this.query.country.iso)} - 
+     ${await this.getCoins()[this.query.coin]} at 
+     ${this.query.time}
+     `;
   }
 
-  getCronFormatedTimeString() {
+  async getCronFormatedTimeString() {
     return `* * ${this.query.time} * * *`;
   }
 
-  getTimeZoneByCountry(country) {
+  async getTimeZoneByCountry(country) {
     return ct.getCountry(country).timezones;
   }
 
@@ -76,15 +94,20 @@ class QueryBuilder {
     });
   }
 
-  save() {
-    const sql = `INSERT INTO tasks(country, timezone, time, coin) VALUES (?,?,?,?)`;
+  async save() {
+    const sql = `INSERT INTO tasks(time, channel_id, coin_id, country_id) VALUES (?,?,?,?)`;
     let tz = this.query.tz;
 
     if(!tz) {
       tz = this.getTimeZoneByCountry(this.query.country.iso)
     }
 
-    db.run(sql, [this.query.country.iso, tz, this.getCronFormatedTimeString(), this.query.coin], err => {
+    db.run(sql, [
+        this.getCronFormatedTimeString(),
+        this.query.channel_id,
+        this.query.coin_id,
+        this.query.country_id
+      ], err => {
         if(err) console.log(err)
       }
     )
@@ -97,7 +120,7 @@ class QueryBuilder {
     return await db.run(sql);
   }
 
-  reset() {
+  async reset() {
     this.query = {};
   }
 }

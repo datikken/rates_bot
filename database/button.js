@@ -1,10 +1,10 @@
-import {coins} from "../config/coins.js";
 import {Markup} from "telegraf";
 import qb from './qb.js';
 import {CallbackData} from '@bot-base/callback-data';
 
 export const deleteData = new CallbackData('delete', ['id']);
 export const countryData = new CallbackData('create_country', ['id']);
+export const coinData = new CallbackData('add_coin', ['id']);
 
 export const getAllCountryButtons = async () => {
   const countries = await qb.getCountries();
@@ -21,11 +21,17 @@ export const getAllCountryButtons = async () => {
   return res;
 };
 
-export const getAllCoinButtons = () => {
+export const getAllCoinButtons = async () => {
+  const coins = await qb.getCoins();
   let res = [];
   coins.map(coin => {
     res.push([
-      Markup.button.callback(`${coin.symbol} ${coin.name}`, `${coin.symbol}`)]);
+      Markup.button.callback(`${coin.symbol} ${coin.name}`,
+        coinData.create({
+          type: 'add_coin',
+          id: coin.id,
+        })
+      )]);
   })
   return res;
 }
