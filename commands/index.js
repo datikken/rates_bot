@@ -31,7 +31,7 @@ export const setBotCommands = (bot) => {
 
   bot.command('/health', async ctx => {
     try {
-      await ctx.reply(`<b>🥴</b>`)
+      await ctx.reply(`🥴`)
     } catch (e) {
       console.error(e)
     }
