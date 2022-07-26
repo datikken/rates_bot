@@ -1,5 +1,4 @@
 export const cmmnds = [
   '/create_task',
-  '/get_tasks',
-  '/btc'
+  '/get_tasks'
 ];

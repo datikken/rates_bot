@@ -28,4 +28,12 @@ export const setBotCommands = (bot) => {
       console.error(e)
     }
   })
+
+  bot.command('/health', async ctx => {
+    try {
+      await ctx.reply(`<b>🥴</b>`)
+    } catch (e) {
+      console.error(e)
+    }
+  })
 }
