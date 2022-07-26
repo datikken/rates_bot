@@ -1,8 +1,6 @@
 import {Markup} from "telegraf";
 import {getAllCountryButtons, getAllTasksButtons} from "../database/button.js";
 import {cmmnds} from "../config/commands.js";
-import {postToAllChannels} from "../schedule/posting.js";
-
 
 export const setBotCommands = (bot) => {
   bot.start((ctx) => ctx.replyWithHTML(`
@@ -29,9 +27,5 @@ export const setBotCommands = (bot) => {
     } catch (e) {
       console.error(e)
     }
-  })
-
-  bot.command('/btc', async ctx => {
-      await postToAllChannels('BTC', ctx);
   })
 }
