@@ -36,7 +36,7 @@ export const getAllCoinButtons = async () => {
   return res;
 }
 
-export const getFinalButtons = () => {
+export const getFinalButtons = async () => {
   return [
     Markup.button.callback('Reset', 'reset'),
     Markup.button.callback('Save', 'save'),

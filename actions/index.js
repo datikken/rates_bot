@@ -88,7 +88,7 @@ export const setBotActions = async (bot) => {
         deunionize(ctx.callbackQuery).data
       );
       await qb.addCoin(id);
-      ctx.reply('Coin accepted!');
+      await ctx.reply('Coin accepted!');
       try {
         await ctx.reply('Choose the hour:', timePicker.getTimePicker('0'));
       } catch (e) {
@@ -97,20 +97,20 @@ export const setBotActions = async (bot) => {
     }
   );
 
-  bot.action('reset', ctx => {
-    qb.reset();
+  bot.action('reset', async ctx => {
+    await qb.reset();
     ctx.replyWithHTML(`<b>Jobs done.</b>`)
   })
 
-  bot.action('save', ctx => {
-    qb.save();
+  bot.action('save', async ctx => {
+    await qb.save();
     ctx.replyWithHTML(`<b>Jobs done.</b>`)
   })
 
-  timePicker.setTimePickerListener((context, time) => {
-    qb.addTime(time);
-    context.reply(qb.getTotal(), Markup.inlineKeyboard([
-      ...getFinalButtons()
+  timePicker.setTimePickerListener(async (context, time) => {
+    await qb.addTime(time);
+    await context.reply(`${await qb.getTotal()}`, Markup.inlineKeyboard([
+      ... await getFinalButtons()
     ]));
   });
 }

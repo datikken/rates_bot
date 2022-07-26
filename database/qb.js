@@ -6,10 +6,20 @@ class QueryBuilder {
     this.query = {};
   }
 
-  async getCountryById(id) {
-    const sql = `SELECT * FROM countries WHERE id = ${id}`;
+  async execGetSql(query) {
     return new Promise((resolve, reject) => {
-      db.get(sql, (error, result) => {
+      db.get(query, (error, result) => {
+        if (error) {
+          reject(error);
+        } else {
+          resolve(result);
+        }
+      });
+    });
+  }
+  async execAllSql(query) {
+    return new Promise((resolve, reject) => {
+      db.all(query, (error, result) => {
         if (error) {
           reject(error);
         } else {
@@ -19,16 +29,24 @@ class QueryBuilder {
     });
   }
 
+  async getChannelByCountry(id) {
+    const sql = `SELECT * FROM channels where country_id = ${id}`;
+    return await this.execGetSql(sql);
+  }
+
+  async getCoinById(id) {
+    const sql = `SELECT * FROM coins WHERE id = ${id}`;
+    return await this.execGetSql(sql);
+  }
+
+  async getCountryById(id) {
+    const sql = `SELECT * FROM countries WHERE id = ${id}`;
+    return await this.execGetSql(sql);
+  }
+
   async getCoins() {
-    return  new Promise((resolve, reject) => {
-      db.all('SELECT * FROM coins', (error, result) => {
-        if (error) {
-          reject(error);
-        } else {
-          resolve(result);
-        }
-      });
-    });
+    const sql = 'SELECT * FROM coins';
+    return await this.execAllSql(sql);
   }
 
   async getCountry() {
@@ -40,23 +58,16 @@ class QueryBuilder {
   }
 
   async getCountries() {
-    return  new Promise((resolve, reject) => {
-      db.all('SELECT * FROM countries', (error, result) => {
-        if (error) {
-          reject(error);
-        } else {
-          resolve(result);
-        }
-      });
-    });
+    const sql = 'SELECT * FROM countries';
+    return await this.execAllSql(sql);
   }
 
   async addCoin(coin) {
-    this.query.coin = coin;
+    this.query.coin = await this.getCoinById(coin);
   }
 
-  async addTime(timestamp) {
-    this.query.time = timestamp;
+  async addTime(hour) {
+    this.query.time = await this.getCronFormatedTimeString(hour);
   }
 
   async addTimezone(tz) {
@@ -64,17 +75,11 @@ class QueryBuilder {
   }
 
   async getTotal() {
-    return `
-    Selected:
-     ${this.query.country.name} - 
-     ${this.query.tz ? this.query.tz : this.getTimeZoneByCountry(this.query.country.iso)} - 
-     ${await this.getCoins()[this.query.coin]} at 
-     ${this.query.time}
-     `;
+    return `${this.query.country.iso} ${this.query.country.flag} ${this.query.tz ?? ''} ${this.query.coin.symbol} at ${this.query.time}`;
   }
 
-  async getCronFormatedTimeString() {
-    return `* * ${this.query.time} * * *`;
+  async getCronFormatedTimeString(hour) {
+    return `0 ${hour} * * *`;
   }
 
   async getTimeZoneByCountry(country) {
@@ -83,35 +88,18 @@ class QueryBuilder {
 
   async getTasks() {
     const sql = `SELECT * FROM tasks`;
-    return new Promise((resolve, reject) => {
-      db.all(sql, (error, result) => {
-        if (error) {
-          reject(error);
-        } else {
-          resolve(result);
-        }
-      });
-    });
+    return await this.execAllSql(sql);
   }
 
   async save() {
     const sql = `INSERT INTO tasks(time, channel_id, coin_id, country_id) VALUES (?,?,?,?)`;
-    let tz = this.query.tz;
-
-    if(!tz) {
-      tz = this.getTimeZoneByCountry(this.query.country.iso)
-    }
-
-    db.run(sql, [
-        this.getCronFormatedTimeString(),
-        this.query.channel_id,
-        this.query.coin_id,
-        this.query.country_id
-      ], err => {
+    const channel = await this.getChannelByCountry(this.query.country.id);
+    const arrToSave = [this.query.time, channel.id, this.query.coin.id, this.query.country.id];
+    await db.run(sql, arrToSave, err => {
         if(err) console.log(err)
       }
     )
-    this.reset();
+    await this.reset();
     return 'Saved!';
   }
 
