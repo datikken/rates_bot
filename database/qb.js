@@ -91,10 +91,16 @@ class QueryBuilder {
     return await this.execAllSql(sql);
   }
 
+  async getChannels() {
+    const sql = `SELECT * FROM channels`;
+    return await this.execAllSql(sql);
+  }
+
   async save() {
-    const sql = `INSERT INTO tasks(time, channel_id, coin_id, country_id) VALUES (?,?,?,?)`;
+    const sql = `INSERT INTO tasks(time, channel_id, coin_id, country_id, timezone) VALUES (?,?,?,?,?)`;
     const channel = await this.getChannelByCountry(this.query.country.id);
-    const arrToSave = [this.query.time, channel.id, this.query.coin.id, this.query.country.id];
+    const defaultTz = await this.getTimeZoneByCountry(this.query.country.iso);
+    const arrToSave = [this.query.time, channel.id, this.query.coin.id, this.query.country.id, this.query.tz ?? defaultTz];
     await db.run(sql, arrToSave, err => {
         if(err) console.log(err)
       }

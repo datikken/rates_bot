@@ -26,6 +26,7 @@ export const setBotActions = async (bot) => {
             deunionize(ctx.callbackQuery).data
         );
         await qb.deleteTask(id);
+        await ctx.reply('Deleted');
       }
   );
 

@@ -1,6 +1,6 @@
 import Sentry from "@sentry/node";
 import {Telegraf} from 'telegraf';
-import {runScheduledTasks} from "./schedule/index.js";
+// import {runScheduledTasks} from "./schedule/index.js";
 import {setBotActions} from "./actions/index.js";
 import {setBotCommands} from "./commands/index.js";
 import "dotenv/config";
@@ -19,7 +19,7 @@ const bot = new Telegraf(process.env.BOT_TOKEN);
 
 setBotCommands(bot);
 setBotActions(bot);
-runScheduledTasks(bot);
+// runScheduledTasks(bot);
 
 bot.launch();
 

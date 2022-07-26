@@ -53,16 +53,17 @@ export const getTimezonesButtons = (tz) => {
 
 export const getAllTasksButtons = async () => {
   const tasks = await qb.getTasks();
-  let res = [];
-  tasks.map(el => {
-    res.push([
-      Markup.button.callback(
-          `${el.country} - ${el.timezone} - ${el.time} - ${el.coin}   ❌`,
+  return Promise.all(tasks.map(async task => {
+      const country = await qb.getCountryById(task.country_id);
+      const coin = await qb.getCoinById(task.coin_id);
+      return [
+        Markup.button.callback(
+          `${country.name} ${task.timezone} ${coin.symbol} at ${task.time} ❌`,
           deleteData.create({
             type: 'delete',
-            id: el.id,
-          })
-      )])
-  });
-  return res;
+            id: task.id,
+          }))
+      ];
+    })
+  );
 }
